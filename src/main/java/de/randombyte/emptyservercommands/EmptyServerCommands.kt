@@ -37,9 +37,7 @@ class EmptyServerCommands @Inject constructor(val logger: Logger,
 
     @Listener
     fun onPlayerLeave(event: ClientConnectionEvent.Disconnect) {
-        if (Sponge.getServer().onlinePlayers.size <= 1) { // player is removed from onlinePlayer after this event
-            startCountdown()
-        }
+        if (Sponge.getServer().onlinePlayers.size <= 1) startCountdown() // player is removed from onlinePlayer after this event
     }
 
     private fun startCountdown() {
