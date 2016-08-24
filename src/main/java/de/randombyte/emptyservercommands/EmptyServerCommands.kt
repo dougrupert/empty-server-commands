@@ -20,7 +20,7 @@ class EmptyServerCommands @Inject constructor(val logger: Logger,
     companion object {
         const val ID = "empty-server-commands"
         const val NAME = "EmptyServerCommands"
-        const val VERSION = "v0.1"
+        const val VERSION = "v0.1.1"
         const val AUTHOR = "RandomByte"
     }
 
