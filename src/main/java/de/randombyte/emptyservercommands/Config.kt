@@ -20,7 +20,7 @@ class Config {
             save(load().setValue(typeToken, config))
         }
     }
-    @Setting(comment = "Duration in minutes the server has to be empty to be shut down.") val delay: Int = 20
+    @Setting(comment = "Duration in minutes the server has to be empty to execute the commands.") val delay: Int = 20
     @Setting(value = "wait-for-first-player",
             comment = "Whether it should be waited for at least one player to join before the plugin is activated.")
         val waitForFirstPlayer: Boolean = false
