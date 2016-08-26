@@ -20,24 +20,29 @@ class EmptyServerCommands @Inject constructor(val logger: Logger,
     companion object {
         const val ID = "empty-server-commands"
         const val NAME = "EmptyServerCommands"
-        const val VERSION = "v0.1.1"
+        const val VERSION = "v0.2"
         const val AUTHOR = "RandomByte"
     }
 
     var commandsExecutionTask: Task? = null // waiting for execution(not cancelled) when the server is empty
 
+    fun tooFewPlayersOnline(onlinePlayersModifier: Int = 0) =
+            Sponge.getServer().onlinePlayers.size + onlinePlayersModifier <= Config.get(configLoader).triggerPlayerCount
+
     @Listener
     fun onInit(event: GameInitializationEvent) {
-        if (!Config.get(configLoader).waitForFirstPlayer) startCountdown() // Also generates config
+        if (!Config.get(configLoader).waitForFirstPlayer && tooFewPlayersOnline()) startCountdown() // Also generates config
         logger.info("$NAME loaded: $VERSION")
     }
 
     @Listener
-    fun onPlayerJoin(event: ClientConnectionEvent.Join) { commandsExecutionTask?.cancel() }
+    fun onPlayerJoin(event: ClientConnectionEvent.Join) {
+        if (!tooFewPlayersOnline()) commandsExecutionTask?.cancel()
+    }
 
     @Listener
     fun onPlayerLeave(event: ClientConnectionEvent.Disconnect) {
-        if (Sponge.getServer().onlinePlayers.size <= 1) startCountdown() // player is removed from onlinePlayer after this event
+        if (tooFewPlayersOnline(-1)) startCountdown() // player is removed from onlinePlayers after this event
     }
 
     private fun startCountdown() {
