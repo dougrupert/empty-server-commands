@@ -25,6 +25,7 @@ class Config {
             comment = "Whether it should be waited for at least one player to join before the plugin is activated.")
         val waitForFirstPlayer: Boolean = false
     @Setting(comment = "Commands that run when server is empty") val commandsEmpty: List<String> = listOf("say Server is empty")
+    @Setting(comment = "Commands that run when someone joins empty server") val commandsPlayers: List<String> = listOf("say Server is no longer empty")
     @Setting(value = "trigger-player-count",
             comment = "Max. amount of players that can be on the server and it is still marked as 'empty'.")
         val triggerPlayerCount: Int = 0
