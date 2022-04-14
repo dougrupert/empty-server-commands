@@ -49,7 +49,7 @@ class EmptyServerCommands @Inject constructor(val logger: Logger,
         commandsExecutionTask = Task.builder()
                 .delay(Config.get(configLoader).delay.toLong(), TimeUnit.MINUTES)
                 .execute { ->
-                    logger.info("No players on the server for a while => Executing commands!")
+                    logger.info("No players on the server for a while, executing commands")
                     Config.get(configLoader).commands.forEach { Sponge.getCommandManager().process(Sponge.getServer().console, it) }
                 }.submit(this)
     }
