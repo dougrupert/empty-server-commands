@@ -25,6 +25,7 @@ class EmptyServerCommands @Inject constructor(val logger: Logger,
     }
 
     var commandsExecutionTask: Task? = null // waiting for execution(not cancelled) when the server is empty
+    var emptyCommandsExecuted: Boolean = false
 
     fun tooFewPlayersOnline(onlinePlayersModifier: Int = 0) =
             Sponge.getServer().onlinePlayers.size + onlinePlayersModifier <= Config.get(configLoader).triggerPlayerCount
@@ -37,7 +38,14 @@ class EmptyServerCommands @Inject constructor(val logger: Logger,
 
     @Listener
     fun onPlayerJoin(event: ClientConnectionEvent.Join) {
-        if (!tooFewPlayersOnline()) commandsExecutionTask?.cancel()
+        if (!tooFewPlayersOnline() && emptyCommandsExecuted) {
+            logger.info("Player joined empty server, executing commands")
+            Config.get(configLoader).commandsPlayers.forEach { Sponge.getCommandManager().process(Sponge.getServer().console, it) }
+            emptyCommandsExecuted = false
+        } else if (!tooFewPlayersOnline() && !emptyCommandsExecuted) {
+            logger.info("Player cancelled empty commands")
+            commandsExecutionTask?.cancel()
+        }
     }
 
     @Listener
@@ -50,7 +58,8 @@ class EmptyServerCommands @Inject constructor(val logger: Logger,
                 .delay(Config.get(configLoader).delay.toLong(), TimeUnit.MINUTES)
                 .execute { ->
                     logger.info("No players on the server for a while, executing commands")
-                    Config.get(configLoader).commands.forEach { Sponge.getCommandManager().process(Sponge.getServer().console, it) }
+                    emptyCommandsExecuted = true
+                    Config.get(configLoader).commandsEmpty.forEach { Sponge.getCommandManager().process(Sponge.getServer().console, it) }
                 }.submit(this)
     }
 }
